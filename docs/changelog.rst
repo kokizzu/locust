@@ -4,6 +4,59 @@ Changelog Highlights
 
 For full details of the Locust changelog, please see https://github.com/locustio/locust/blob/master/CHANGELOG.md
 
+2.0.0
+=====
+
+User ramp up/down and User type selection is now controlled by the master instead of autonomously by the workers 
+----------------------------------------------------------------------------------------------------------------
+This has allowed us to fix some issues with incorrect/skewed User type selection and undesired stepping of ramp up. The issues were especially visible when running many workers and/or using LoadShape:s. This change also allows redistribution of Users if a worker disconnects during a test. This is a major change internally in Locust so please let us know if you encounter any problems (particularly regarding ramp up pace, User distribution, CPU usage on master, etc)
+
+Other potentially breaking API changes
+--------------------------------------
+* Change the default User weight to 1 instead of 10 (the old default made no sense)
+* Fire test_start and test_stop events on workers too (previously they were only fired on master/standalone instances)
+* Update Flask dependency to 2.0
+
+Full list of merged PR:s (and prerelease version they were introduced in)
+-------------------------------------------------------------------------
+* Add option to set concurrency of FastHttpUser/Session (2.0.0b3) https://github.com/locustio/locust/pull/1812/
+* Fire test_start and test_stop events on worker nodes (2.0.0b3) https://github.com/locustio/locust/pull/1777/
+* Auto shrink request stats table to fit terminal (2.0.0b2) https://github.com/locustio/locust/pull/1811
+* Refactoring of the dispatch logic to improve performance (2.0.0b2) https://github.com/locustio/locust/pull/1809 
+* Check version of workers when they connect. Warn if there is a mismatch, refuse 1.x workers to connect (2.0.0b1) https://github.com/locustio/locust/pull/1805 
+* Change the default User weight to 1 instead of 10 (2.0.0b1) https://github.com/locustio/locust/pull/1803
+* Upgrade to Flask 2 (2.0.0b1) https://github.com/locustio/locust/pull/1764
+* Move User selection responsibility from worker to master in order to fix unbalanced distribution of users and uneven ramp-up (2.0.0b0) https://github.com/locustio/locust/pull/1621
+
+1.6.0
+=====
+
+* Allow cross process communication using custom messages https://github.com/locustio/locust/pull/1782
+* Fix: status "stopped" instead of "spawning", tick\(\) method of LoadShape called only once https://github.com/locustio/locust/pull/1769
+
+1.5.3
+=====
+
+* Fix an issue with custom Users calling request_success/_failure.fire() not being added to statistics https://github.com/locustio/locust/pull/1761
+
+1.5.2
+=====
+
+* Pin version of flask to 1.1.2, fixing https://github.com/locustio/locust/issues/1759
+* Fix issue with GRPC compatibility and add GRPC example to documentation https://github.com/locustio/locust/pull/1755
+* Use time.perf_counter() to calculate elapsed times everywhere, should only matter for Windows https://github.com/locustio/locust/pull/1758
+
+1.5.1
+=====
+
+* Fixed an issue with 1.5.0 where an extra parameter (start_time) was passed to request event https://github.com/locustio/locust/pull/1754
+
+1.5.0
+=====
+
+* Unify request_success/request_failure into a single event called request (the old ones are deprecated but still work) https://github.com/locustio/locust/issues/1724
+* Add the response object and context as parameters to the request event. context is used to forward information to the request event handler (can be used for things like username, tags etc)
+
 1.4.4
 =====
 

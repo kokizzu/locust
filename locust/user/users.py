@@ -1,5 +1,5 @@
 from locust.user.wait_time import constant
-from typing import Any, Callable, List, TypeVar, Union
+from typing import Any, Callable, Dict, List, TypeVar, Union
 from gevent import GreenletExit, greenlet
 from gevent.pool import Group
 from locust.clients import HttpSession
@@ -93,7 +93,7 @@ class User(object, metaclass=UserMeta):
             tasks = {ThreadPage:15, write_post:1}
     """
 
-    weight = 10
+    weight = 1
     """Probability of user class being chosen. The higher the weight, the greater the chance of it being chosen."""
 
     abstract = True
@@ -153,7 +153,7 @@ class User(object, metaclass=UserMeta):
         Start a greenlet that runs this User instance.
 
         :param group: Group instance where the greenlet will be spawned.
-        :type gevent_group: gevent.pool.Group
+        :type group: gevent.pool.Group
         :returns: The spawned greenlet.
         """
 
@@ -184,6 +184,25 @@ class User(object, metaclass=UserMeta):
         elif self._state == LOCUST_STATE_RUNNING:
             self._state = LOCUST_STATE_STOPPING
             return False
+
+    @property
+    def group(self):
+        return self._group
+
+    @property
+    def greenlet(self):
+        return self._greenlet
+
+    def context(self) -> Dict:
+        """
+        Adds the returned value (a dict) to the context for :ref:`request event <request_context>`
+        """
+        return {}
+
+    @classmethod
+    def fullname(cls) -> str:
+        """Fully qualified name of the user class, e.g. my_package.my_module.MyUserClass"""
+        return ".".join(filter(lambda x: x != "<locals>", (cls.__module__ + "." + cls.__qualname__).split(".")))
 
 
 class HttpUser(User):
@@ -216,8 +235,8 @@ class HttpUser(User):
 
         session = HttpSession(
             base_url=self.host,
-            request_success=self.environment.events.request_success,
-            request_failure=self.environment.events.request_failure,
+            request_event=self.environment.events.request,
+            user=self,
         )
         session.trust_env = False
         self.client = session

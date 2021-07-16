@@ -283,8 +283,6 @@ events. You can set up listeners for these events at the module level of your lo
     def on_test_stop(environment, **kwargs):
         print("A new test is ending")
 
-When running Locust distributed the ``test_start`` and ``test_stop`` events will only be fired in the master node.
-
 init
 ----
 
@@ -304,10 +302,10 @@ global state that all users spawned from this process will need:
         else:
             print("I'm on a worker or standalone node")
 
-other events
+Other events
 ------------
 
-see :ref:`extending locust using event hooks <extending_locust>` for other events and more examples of how to use them.
+See :ref:`extending locust using event hooks <extending_locust>` for other events and more examples of how to use them.
 
 HttpUser class
 ==============
